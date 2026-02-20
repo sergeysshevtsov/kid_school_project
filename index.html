@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>🍴 МЕЛОВОЕ МЕНЮ 🐙 | Голодный осьминог</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #2a2a2a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            font-family: 'Patrick Hand', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+        }
+
+        /* Контейнер с картинкой - абсолютный путь */
+        .menu-background {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 2480 / 3455; /* пропорции вашей картинки */
+            
+            /* АБСОЛЮТНЫЙ ПУТЬ - файл в той же папке что и index.html */
+            background-image: url('background.jpg');
+            
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #1a1a1a;
+            
+            /* Рамка в меловом стиле */
+            border-radius: 50px;
+            border: 10px solid #8b7a64;
+            box-shadow: 
+                0 20px 30px rgba(0,0,0,0.7),
+                inset 0 0 30px rgba(255,255,255,0.2),
+                0 0 0 2px #5a4a3a;
+            
+            padding: 5px;
+            background-clip: padding-box;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Легкий меловый эффект поверх картинки */
+        .menu-background::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 30px 30px, rgba(255,255,255,0.03) 2px, transparent 3px),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 8px);
+            background-size: 60px 60px, 20px 20px;
+            pointer-events: none;
+            border-radius: 40px;
+            z-index: 1;
+        }
+
+        /* Кликабельные зоны с меловым эффектом при наведении */
+        .hotspot {
+            position: absolute;
+            width: 13%; /* немного меньше, так как стало 5 зон */
+            height: 0;
+            padding-bottom: 13%;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+            border: 2px dashed transparent;
+        }
+
+        .hotspot:hover {
+            transform: scale(1.1);
+            border: 3px dashed #534f4f;
+            box-shadow: 0 0 20px rgba(65, 65, 65, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ПОЗИЦИОНИРОВАНИЕ ДЛЯ 5 ОСЬМИНОГОВ */
+        /* 1. КОК ТЕМЬ - голубой коктейль (верхний левый) */
+        .hotspot-1 { 
+            top: 25%; 
+            left: 17%; 
+        }
+        
+        /* 2. ОСМИННОЙ ПАЛОСТЬ - макаронс (верхний правый) */
+        .hotspot-2 { 
+            top: 25%; 
+            right: 10%; 
+        }
+        
+        /* 3. ОСМИННОЙ КУЛИНАРНЫЙ - суп (средний левый) */
+        .hotspot-3 { 
+            top: 65%; 
+            left: 17%; 
+        }
+        
+        /* 4. ОСМИННОЙ СУПИТЬ - паста (средний правый) */
+        .hotspot-4 { 
+            top: 65%; 
+            right: 10%; 
+        }
+        
+        /* 5. ОСМИННОЙ ПАНЧИКЕВУ - панкейки (внизу по центру) */
+        .hotspot-5 { 
+            bottom: 15%; 
+            left: 50%; 
+            transform: translateX(-50%);
+        }
+
+        /* МОДАЛЬНОЕ ОКНО В МЕЛОВОМ СТИЛЕ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: #1e1e1e;
+            background-image: 
+                radial-gradient(circle at 10px 10px, rgba(255,255,255,0.05) 2px, transparent 2px),
+                linear-gradient(45deg, #2a2a2a 0%, #1a1a1a 100%);
+            background-size: 30px 30px, 100%;
+            max-width: 450px;
+            width: 100%;
+            border-radius: 50px 50px 30px 30px;
+            border: 6px solid #8b7a64;
+            padding: 25px 20px;
+            position: relative;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,255,255,0.1);
+            animation: pop 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: #f5f0e6;
+            font-family: 'Patrick Hand', 'Chalkboard SE', cursive;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 40px;
+            font-weight: bold;
+            color: #f5f0e6;
+            cursor: pointer;
+            background: #3a3a3a;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #8b7a64;
+            text-shadow: 0 2px 0 #000;
+            box-shadow: inset 0 -3px 0 #5a5a5a;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #4a4a4a;
+            transform: scale(1.1);
+            border-color: #c0b09a;
+        }
+
+        .modal-title {
+            font-size: 35px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 
+                2px 2px 0 #4a4a4a,
+                4px 4px 0 #000000,
+                0 0 20px rgba(255, 255, 255, 0.3);
+            margin-bottom: 10px;
+            padding-right: 40px;
+            line-height: 1.2;
+            letter-spacing: 2px;
+            font-family: 'Patrick Hand', 'Chalkboard SE', cursive;
+            word-break: break-word;
+        }
+
+        .modal-desc {
+            font-size: 22px;
+            color: #d4c8b8;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 18px;
+            border-radius: 40px;
+            display: inline-block;
+            border: 2px dashed #a89f92;
+            font-style: italic;
+            text-shadow: 0 2px 0 #000;
+        }
+
+        .modal-ingredients {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 30px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 3px solid #8b7a64;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .modal-ingredients h3 {
+            color: #ffd966;
+            margin-bottom: 12px;
+            font-size: 26px;
+            text-shadow: 0 3px 0 #5a3e1a;
+            letter-spacing: 1px;
+            border-bottom: 3px solid #8b7a64;
+            padding-bottom: 8px;
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        .modal-ingredients ul {
+            list-style-type: none;
+        }
+
+        .modal-ingredients li {
+            margin-bottom: 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #f0e6d8;
+            text-shadow: 0 1px 0 #000;
+        }
+
+        .modal-ingredients li::before {
+            content: "✧";
+            color: #ffb347;
+            font-size: 24px;
+            text-shadow: 0 2px 0 #6b4f2a;
+        }
+
+        .modal-nutrition {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50px;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 22px;
+            border: 3px solid #a89f92;
+            margin: 15px 0;
+            color: #b8e2f0;
+            text-shadow: 0 2px 0 #1a4d5e;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .modal-nutrition span {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 30px;
+            border: 1px dashed #a89f92;
+        }
+
+        .modal-price {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 900;
+            color: #ffd966;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 60px;
+            padding: 12px;
+            border: 5px solid #8b7a64;
+            text-shadow: 
+                3px 3px 0 #5a3e1a,
+                0 0 20px #ffb347;
+            letter-spacing: 3px;
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        /* Адаптация для мобильных */
+        @media (max-width: 600px) {
+            .modal-title {
+                font-size: 30px;
+            }
+            .modal-desc {
+                font-size: 18px;
+            }
+            .modal-ingredients li {
+                font-size: 18px;
+            }
+            .modal-nutrition {
+                font-size: 18px;
+            }
+            .modal-price {
+                font-size: 34px;
+            }
+            .close-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 30px;
+                top: 10px;
+                right: 15px;
+            }
+            .hotspot {
+                width: 15%;
+                padding-bottom: 15%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .modal-title {
+                font-size: 26px;
+            }
+            .modal-price {
+                font-size: 30px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="menu-background">
+        <!-- Кликабельные области для 5 осьминогов -->
+        <div class="hotspot hotspot-1" onclick="openModal('modal1')" title="Коктейль"></div>
+        <div class="hotspot hotspot-2" onclick="openModal('modal2')" title="Макаронс"></div>
+        <div class="hotspot hotspot-3" onclick="openModal('modal3')" title="Суп"></div>
+        <div class="hotspot hotspot-4" onclick="openModal('modal4')" title="Паста"></div>
+        <div class="hotspot hotspot-5" onclick="openModal('modal5')" title="Панкейки"></div>
+    </div>
+
+     <!-- 1. Коктейль -->
+    <div id="modal1" class="modal" onclick="closeModalOutside(event, 'modal1')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal1')">✕</span>
+            <div class="modal-title">🍹 КОКТЕЙЛЬ С ОСЬМИНОЖКАМИ</div>
+            <div class="modal-desc">~ голубая лагуна ~</div>
+            <div class="modal-ingredients">
+                <h3>✧ СОСТАВ ✧</h3>
+                <ul>
+                    <li>Голубой лимонад «Синий осьминог»</li>
+                    <li>Сок лайма (свежевыжатый)</li>
+                    <li>Ледяные кубики с ягодами</li>
+                    <li>Долька лайма и вишенка</li>
+                    <li>Трубочка с осьминожком</li>
+                </ul>
+            </div>
+            <div class="modal-nutrition">
+                <span>🔥 120 ккал</span>
+                <span>🍬 28г сахара</span>
+            </div>
+            <div class="modal-price">
+                290 ₽
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Макаронс -->
+    <div id="modal2" class="modal" onclick="closeModalOutside(event, 'modal2')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal2')">✕</span>
+            <div class="modal-title">🍪 ОСЬМИНОЖЬЯ РАДОСТЬ</div>
+            <div class="modal-desc">~ разноцветное счастье ~</div>
+            <div class="modal-ingredients">
+                <h3>✧ СОСТАВ ✧</h3>
+                <ul>
+                    <li>Миндальная мука</li>
+                    <li>Яичные белки</li>
+                    <li>Малиновый ганаш</li>
+                    <li>Фисташковый крем</li>
+                    <li>Лимонный курд</li>
+                </ul>
+            </div>
+            <div class="modal-nutrition">
+                <span>🔥 320 ккал</span>
+                <span>🥚 5г белка</span>
+            </div>
+            <div class="modal-price">
+                350 ₽
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Живой суп -->
+    <div id="modal3" class="modal" onclick="closeModalOutside(event, 'modal3')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal3')">✕</span>
+            <div class="modal-title">🍲 ЖИВОЙ СУП</div>
+            <div class="modal-desc">~ настоящее морское дно ~</div>
+            <div class="modal-ingredients">
+                <h3>✧ СОСТАВ ✧</h3>
+                <ul>
+                    <li>Рыбный бульон</li>
+                    <li>Креветки</li>
+                    <li>Мидии</li>
+                    <li>Колечки кальмаров</li>
+                    <li>Крабовые палочки</li>
+                    <li>Свежая зелень</li>
+                </ul>
+            </div>
+            <div class="modal-nutrition">
+                <span>🔥 210 ккал</span>
+                <span>🥩 24г белка</span>
+            </div>
+            <div class="modal-price">
+                420 ₽
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Панкейки -->
+    <div id="modal4" class="modal" onclick="closeModalOutside(event, 'modal4')">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal4')">✕</span>
+            <div class="modal-title">🥞 ОСЬМИНОЖЬИ ПАНКЕЙКИ</div>
+            <div class="modal-desc">~ чернильное настроение ~</div>
+            <div class="modal-ingredients">
+                <h3>✧ СОСТАВ ✧</h3>
+                <ul>
+                    <li>Панкейки на кефире</li>
+                    <li>Голубика (она красит тесто)</li>
+                    <li>Свежая ежевика</li>
+                    <li>Кленовый сироп</li>
+                    <li>Шарик мороженого</li>
+                </ul>
+            </div>
+            <div class="modal-nutrition">
+                <span>🔥 450 ккал</span>
+                <span>🥛 12г белка</span>
+            </div>
+            <div class="modal-price">
+                380 ₽
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function closeModalOutside(event, modalId) {
+            if (event.target === document.getElementById(modalId)) {
+                closeModal(modalId);
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
